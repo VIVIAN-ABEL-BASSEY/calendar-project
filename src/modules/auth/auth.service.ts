@@ -6,7 +6,7 @@ export const registerUser = async (
   firstName: string,
   lastName: string,
   email: string,
-  passwordHash: string
+  password: string
 ) => {
   const existingUser = await User.findOne({ email });
 
@@ -14,26 +14,26 @@ export const registerUser = async (
     throw new Error("User already exists");
   }
 
-  const hashedPassword = await hashPassword(passwordHash);
+  const hashedPassword = await hashPassword(password);
 
   const user = await User.create({
-  firstName,
-  lastName,
-  email,
-  passwordHash: hashedPassword,
-});
+    firstName,
+    lastName,
+    email,
+    passwordHash: hashedPassword
+  });
 
   return user;
 };
 
-export const loginUser = async (email: string, passwordHash: string) => {
-  const user = await User.findOne({ email }).select("+password");
+export const loginUser = async (email: string, password: string) => {
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new Error("Invalid credentials");
   }
 
-  const isMatch = await comparePassword(passwordHash, user.passwordHash);
+  const isMatch = await comparePassword(password, user.passwordHash);
 
   if (!isMatch) {
     throw new Error("Invalid credentials");
@@ -45,6 +45,6 @@ export const loginUser = async (email: string, passwordHash: string) => {
   return {
     user,
     accessToken,
-    refreshToken,
+    refreshToken
   };
 };
