@@ -41,3 +41,31 @@ export const getUserTaskGroups = async (req: Request, res: Response) => {
     });
   }
 };
+export const updateTaskGroup = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).userId;
+    const { id } = req.params;
+
+    const updatedGroup = await TaskGroup.findOneAndUpdate(
+      { _id: id, userId }, // ensures user owns the group
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedGroup) {
+      return res.status(404).json({
+        message: "Task group not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Task group updated successfully",
+      group: updatedGroup
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update task group"
+    });
+  }
+};
