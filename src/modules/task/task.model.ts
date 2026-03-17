@@ -8,6 +8,7 @@ export interface ITask extends Document {
   status: "pending" | "in-progress" | "completed";
   userId: mongoose.Types.ObjectId;
   taskGroupId?: mongoose.Types.ObjectId;
+  groupId?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,8 +46,13 @@ const taskSchema = new Schema<ITask>(
       ref: "User",
       required: true
     },
-
-    taskGroupId: {
+    
+    groupId: {
+    type: Schema.Types.ObjectId,
+     ref: "TaskGroup",
+     default: null
+},
+     taskGroupId: {
       type: Schema.Types.ObjectId,
       ref: "TaskGroup"
     }
