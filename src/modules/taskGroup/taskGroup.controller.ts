@@ -69,3 +69,30 @@ export const updateTaskGroup = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteTaskGroup = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).userId;
+    const { id } = req.params;
+
+    const deletedGroup = await TaskGroup.findOneAndDelete({
+      _id: id,
+      userId
+    });
+
+    if (!deletedGroup) {
+      return res.status(404).json({
+        message: "Task group not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Task group deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete task group"
+    });
+  }
+};
