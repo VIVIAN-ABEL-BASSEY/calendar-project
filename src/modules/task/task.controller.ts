@@ -70,8 +70,8 @@ export const getUserTasks = async (req: Request, res: Response) => {
     console.log("FINAL FILTER:", filter); // debug
 
     const tasks = await Task.find(filter)
-      .populate("groupId", "name")
-      .sort({ createdAt: -1 });
+      .populate("groupId", "name").sort({ dueDate: 1 })
+    //   .sort({ createdAt: -1 });
     
     // const tasks = await Task.find({ userId })
     // .populate("groupId", "name") // 👈 IMPORTANT

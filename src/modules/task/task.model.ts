@@ -26,7 +26,8 @@ const taskSchema = new Schema<ITask>(
     },
 
     dueDate: {
-      type: Date
+      type: Date,
+      default: null
     },
 
     priority: {
@@ -46,7 +47,7 @@ const taskSchema = new Schema<ITask>(
       ref: "User",
       required: true
     },
-    
+
     groupId: {
     type: Schema.Types.ObjectId,
      ref: "TaskGroup",
