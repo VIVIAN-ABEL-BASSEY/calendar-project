@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import { Task } from "./task.model";
+import { title } from "node:process";
 
 // export const createTask = async (req: Request, res: Response) => {
 //   try {
@@ -52,8 +54,28 @@ export const createTask = async (req: Request, res: Response) => {
 export const getUserTasks = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
+    const { status, groupId } = req.query;
 
-    const tasks = await Task.find({ userId }).populate("groupId", "name").sort({ createdAt: -1 });
+    const filter: any = { userId };
+
+    if (status && typeof status === "string") {
+      filter.status = status;
+    }
+
+    // ✅ FIX 2: Convert groupId to ObjectId
+    if (groupId && typeof groupId === "string") {
+      filter.groupId = new mongoose.Types.ObjectId(groupId);
+    }
+
+    console.log("FINAL FILTER:", filter); // debug
+
+    const tasks = await Task.find(filter)
+      .populate("groupId", "name")
+      .sort({ createdAt: -1 });
+    
+    // const tasks = await Task.find({ userId })
+    // .populate("groupId", "name") // 👈 IMPORTANT
+    // .sort({ createdAt: -1 });
 
     res.status(200).json({
       message: "Tasks fetched successfully",
