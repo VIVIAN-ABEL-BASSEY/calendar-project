@@ -69,9 +69,25 @@ export const getUserTasks = async (req: Request, res: Response) => {
 
     console.log("FINAL FILTER:", filter); // debug
 
-    const tasks = await Task.find(filter)
-      .populate("groupId", "name").sort({ dueDate: 1 })
-    //   .sort({ createdAt: -1 });
+    const tasksWithDueDate = await Task.find({
+    ...filter,
+    dueDate: { $ne: null }
+    })
+  .populate("groupId", "name")
+  .sort({ dueDate: 1 });
+
+    const tasksWithoutDueDate = await Task.find({
+    ...filter,
+    dueDate: null
+    })
+    .populate("groupId", "name")
+    .sort({ createdAt: -1 });
+
+    const tasks = [...tasksWithDueDate, ...tasksWithoutDueDate];
+
+    // const tasks = await Task.find(filter)
+    //   .populate("groupId", "name").sort({ dueDate: 1, createdAt: -1 })
+
     
     // const tasks = await Task.find({ userId })
     // .populate("groupId", "name") // 👈 IMPORTANT
