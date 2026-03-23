@@ -54,9 +54,13 @@ export const createTask = async (req: Request, res: Response) => {
 export const getUserTasks = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
-    const { status, groupId } = req.query;
+    const { status, groupId,search } = req.query;
 
     const filter: any = { userId };
+    
+    if (search && typeof search === "string") {
+    filter.title = { $regex: search, $options: "i" }; // case-insensitive
+    }
 
     if (status && typeof status === "string") {
       filter.status = status;
@@ -67,7 +71,7 @@ export const getUserTasks = async (req: Request, res: Response) => {
       filter.groupId = new mongoose.Types.ObjectId(groupId);
     }
 
-    console.log("FINAL FILTER:", filter); // debug
+    // console.log("FINAL FILTER:", filter); // debug
 
     const today = new Date();
     const overdueTasks = await Task.find({
