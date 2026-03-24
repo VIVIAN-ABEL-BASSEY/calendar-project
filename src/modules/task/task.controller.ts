@@ -135,6 +135,34 @@ export const getUserTasks = async (req: Request, res: Response) => {
   }
 };
 
+export const getTaskById = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).userId;
+    const { id } = req.params;
+
+    const task = await Task.findOne({
+      _id: id,
+      userId
+    }).populate("groupId", "name");
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Task fetched successfully",
+      task
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch task"
+    });
+  }
+};
+
 export const updateTask = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
