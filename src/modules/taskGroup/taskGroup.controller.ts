@@ -9,8 +9,9 @@ export const createTaskGroup = async (req: Request, res: Response) => {
     const userId = (req as any).userId;
 
     const group = await TaskGroup.create({
-      name,
-      userId
+    //   name,
+        ...req.body,
+        userId
     });
 
     res.status(201).json({

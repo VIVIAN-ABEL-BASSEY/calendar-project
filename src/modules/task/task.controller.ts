@@ -54,7 +54,7 @@ export const createTask = async (req: Request, res: Response) => {
 export const getUserTasks = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
-    const { status, groupId,search } = req.query;
+    const { status, groupId,overdue, search, page = "1", limit = "10"  } = req.query;
 
     const filter: any = { userId };
     
@@ -70,8 +70,7 @@ export const getUserTasks = async (req: Request, res: Response) => {
     if (groupId && typeof groupId === "string") {
       filter.groupId = new mongoose.Types.ObjectId(groupId);
     }
-
-    // console.log("FINAL FILTER:", filter); // debug
+// console.log("FINAL FILTER:", filter); // debug
 
     const today = new Date();
     const overdueTasks = await Task.find({
@@ -95,21 +94,36 @@ export const getUserTasks = async (req: Request, res: Response) => {
     })
     .populate("groupId", "name")
     .sort({ createdAt: -1 });
+    const allTasks = [...overdueTasks,...tasksWithDueDate, ...tasksWithoutDueDate];
 
-    const tasks = [...overdueTasks,...tasksWithDueDate, ...tasksWithoutDueDate];
-
-    // const tasks = await Task.find(filter)
-    //   .populate("groupId", "name").sort({ dueDate: 1, createdAt: -1 })
-
-    
-    // const tasks = await Task.find({ userId })
-    // .populate("groupId", "name") // 👈 IMPORTANT
-    // .sort({ createdAt: -1 });
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+    const paginatedTasks = allTasks.slice(skip, skip + limitNumber);
 
     res.status(200).json({
-      message: "Tasks fetched successfully",
-      tasks
+        message: "Tasks fetched successfully",
+        totalTasks: allTasks.length,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(allTasks.length / limitNumber),
+        tasks: paginatedTasks
     });
+    if (overdue === "true") {
+  const today = new Date();
+
+  const overdueTasks = await Task.find({
+    ...filter,
+    dueDate: { $lt: today },
+    status: { $ne: "completed" }
+  })
+    .populate("groupId", "name")
+    .sort({ dueDate: 1 });
+
+  return res.status(200).json({
+    message: "Overdue tasks fetched successfully",
+    tasks: overdueTasks
+  });
+}
 
   } catch (error) {
     res.status(500).json({
