@@ -59,7 +59,11 @@ export const getUserTasks = async (req: Request, res: Response) => {
     const filter: any = { userId };
     
     if (search && typeof search === "string") {
-    filter.title = { $regex: search, $options: "i" }; // case-insensitive
+    // filter.title = { $regex: search, $options: "i" }; // case-insensitive
+    filter.$or = [
+    { title: { $regex: search, $options: "i" } },
+    { description: { $regex: search, $options: "i" } }
+];
     }
 
     if (status && typeof status === "string") {
@@ -71,7 +75,22 @@ export const getUserTasks = async (req: Request, res: Response) => {
       filter.groupId = new mongoose.Types.ObjectId(groupId);
     }
 // console.log("FINAL FILTER:", filter); // debug
+        if (overdue === "true") {
+  const today = new Date();
 
+  const overdueTasks = await Task.find({
+    ...filter,
+    dueDate: { $lt: today },
+    status: { $ne: "completed" }
+  })
+    .populate("groupId", "name")
+    .sort({ dueDate: 1 });
+
+  return res.status(200).json({
+    message: "Overdue tasks fetched successfully",
+    tasks: overdueTasks
+  });
+}
     const today = new Date();
     const overdueTasks = await Task.find({
      ...filter,
@@ -108,22 +127,6 @@ export const getUserTasks = async (req: Request, res: Response) => {
         totalPages: Math.ceil(allTasks.length / limitNumber),
         tasks: paginatedTasks
     });
-    if (overdue === "true") {
-  const today = new Date();
-
-  const overdueTasks = await Task.find({
-    ...filter,
-    dueDate: { $lt: today },
-    status: { $ne: "completed" }
-  })
-    .populate("groupId", "name")
-    .sort({ dueDate: 1 });
-
-  return res.status(200).json({
-    message: "Overdue tasks fetched successfully",
-    tasks: overdueTasks
-  });
-}
 
   } catch (error) {
     res.status(500).json({
