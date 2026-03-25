@@ -59,26 +59,36 @@ export const getUserTasks = async (req: Request, res: Response) => {
     const filter: any = { userId };
     
     if (search && typeof search === "string") {
-    // filter.title = { $regex: search, $options: "i" }; // case-insensitive
     filter.$or = [
     { title: { $regex: search, $options: "i" } },
     { description: { $regex: search, $options: "i" } }
 ];
-    }
-
+  }
     if (status && typeof status === "string") {
       filter.status = status;
     }
-
-    // ✅ FIX 2: Convert groupId to ObjectId
     if (groupId && typeof groupId === "string") {
       filter.groupId = new mongoose.Types.ObjectId(groupId);
     }
-// console.log("FINAL FILTER:", filter); // debug
-        if (overdue === "true") {
-  const today = new Date();
+    
+    const hasFilters = status || groupId || search;
+    if (hasFilters) {
+      const tasks = await Task.find(filter)
+        .populate("groupId", "name")
+        .sort({ createdAt: -1 });
 
-  const overdueTasks = await Task.find({
+      return res.status(200).json({
+        message: "Tasks fetched successfully",
+        totalTasks: tasks.length,
+        currentPage: 1,
+        totalPages: 1,
+        tasks
+      });
+    }
+
+    if (overdue === "true") {
+    const today = new Date();
+    const overdueTasks = await Task.find({
     ...filter,
     dueDate: { $lt: today },
     status: { $ne: "completed" }
