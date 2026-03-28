@@ -6,25 +6,26 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: ""
-  });
+});
+
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+  console.log(form)
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
     try {
       await registerUser(form);
       alert("Registration successful");
-      navigate("/login");
-    } catch (error) {
-      alert("Registration failed");
-      console.log(error)
+      navigate("/");
+    } catch (error:any) {
+      console.log(error.response?.data);
+    alert(error.response?.data?.message || "Registration failed");
     }
   };
 
@@ -33,10 +34,16 @@ const Register = () => {
       <h2>Register</h2>
 
       <form onSubmit={handleSubmit}>
+       <input
+        name="firstName"
+        placeholder="First Name"
+        onChange={handleChange}
+        />
+
         <input
-          name="name"
-          placeholder="Name"
-          onChange={handleChange}
+        name="lastName"
+        placeholder="Last Name"
+        onChange={handleChange}
         />
 
         <input
