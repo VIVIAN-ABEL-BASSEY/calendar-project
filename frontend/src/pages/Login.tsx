@@ -19,11 +19,11 @@ const Login = () => {
 
     try {
       const res = await loginUser(form);
-
-      // save token
-      localStorage.setItem("token", res.data.token);
+    // save token
+      localStorage.setItem("token", res.data.accessToken);
 
       alert("Login successful");
+      console.log(res.data)
 
       navigate("/");
     } catch (error) {

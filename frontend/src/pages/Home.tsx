@@ -8,7 +8,7 @@ const Home = () => {
     const fetchTasks = async () => {
       try {
         const res = await getTasks();
-        setTasks(res.data);
+        setTasks(res.data.task);
       } catch (error:any) {
         console.log(error.response?.data)
       }
