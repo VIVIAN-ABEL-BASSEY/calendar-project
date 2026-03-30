@@ -8,7 +8,7 @@ const Home = () => {
     const fetchTasks = async () => {
       try {
         const res = await getTasks();
-        setTasks(res.data.task);
+        setTasks(res.data.tasks);
       } catch (error:any) {
         console.log(error.response?.data)
       }
@@ -21,15 +21,15 @@ const Home = () => {
     <div>
       <h2>My Tasks</h2>
 
-      {tasks.length === 0 ? (
-        <p>No tasks yet</p>
-      ) : (
-        tasks.map((task) => (
-          <div key={task._id}>
-            <p>{task.title}</p>
-          </div>
-        ))
-      )}
+      {tasks && tasks.length === 0 ? (
+  <p>No tasks yet</p>
+) : (
+  tasks?.map((task) => (
+    <div key={task._id}>
+      <p>{task.title}</p>
+    </div>
+  ))
+)}
     </div>
   );
 };
