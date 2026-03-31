@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTasks } from "../api/taskApi";
+import Layout from "../components/layout/Layout";
 
 const Home = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -18,7 +19,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-black text-white p-10">
+    <Layout>
       <h2>My Tasks</h2>
 
       {tasks && tasks.length === 0 ? (
@@ -30,7 +31,7 @@ const Home = () => {
     </div>
   ))
 )}
-    </div>
+    </Layout>
   );
 };
 
