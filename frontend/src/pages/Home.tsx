@@ -38,8 +38,31 @@
 // export default Home;
 
 import Layout from "../components/layout/Layout";
+import { useEffect, useState } from "react";
+import { getTasks, createTask as createTaskAPI } from "../api/taskApi";
+import TaskInput from "../components/task/TaskInput";
 
 const Home = () => {
+    const [tasks, setTasks] = useState<any[]>([]);
+    
+    const fetchTasks = async () => {
+    const res = await getTasks();
+    setTasks(res.data);
+    };
+    useEffect(() => {
+    fetchTasks();
+    }, []);
+
+    const createTask = async (title: string) => {
+    const res = await createTaskAPI({
+        title,
+        priority: "medium",
+        status: "pending",
+    });
+
+    setTasks((prev) => [res.data, ...prev]);
+    };
+
   return (
     <Layout>
       {/* Header */}
@@ -53,8 +76,20 @@ const Home = () => {
 
       {/* Content */}
       <div className="p-6">
-        <p>Your calendar will appear here</p>
-      </div>
+        <TaskInput onCreate={createTask} />
+
+        {tasks.length === 0 ? (
+            <p>No tasks yet</p>
+        ) : (
+            <ul>
+            {tasks.map((task) => (
+                <li key={task._id} className="p-2 bg-white mb-2 rounded shadow">
+                {task.title}
+                </li>
+            ))}
+            </ul>
+        )}
+        </div>
     </Layout>
   );
 };
