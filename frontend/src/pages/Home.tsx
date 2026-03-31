@@ -18,7 +18,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
+    <div className="bg-black text-white p-10">
       <h2>My Tasks</h2>
 
       {tasks && tasks.length === 0 ? (
