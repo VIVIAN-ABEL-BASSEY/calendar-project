@@ -47,7 +47,7 @@ const Home = () => {
     
     const fetchTasks = async () => {
     const res = await getTasks();
-    setTasks(res.data);
+    setTasks(res.data.tasks);
     };
     useEffect(() => {
     fetchTasks();
