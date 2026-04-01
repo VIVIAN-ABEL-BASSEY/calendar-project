@@ -53,13 +53,31 @@ const Home = () => {
     fetchTasks();
     }, []);
 
-  const createTask = async (data: any) => {
+//   const createTask = async (data: any) => {
+//   const res = await createTaskAPI({
+//     ...data,
+//     status: "pending",
+//   });
+
+//   setTasks((prev) => [res.data, ...prev]);
+// };
+const createTask = async (data: any) => {
   const res = await createTaskAPI({
     ...data,
     status: "pending",
   });
 
-  setTasks((prev) => [res.data, ...prev]);
+  const newTask = res.data;
+
+  console.log("NEW TASK RESPONSE:", newTask); // debug
+
+  setTasks((prev) => [
+    {
+      ...newTask,
+      title: newTask.title || data.title, // fallback
+    },
+    ...prev,
+  ]);
 };
 
   return (
@@ -83,7 +101,10 @@ const Home = () => {
             <ul>
             {tasks.map((task) => (
                 <li key={task._id} className="p-2 bg-white mb-2 rounded shadow">
-                {task.title}
+                {/* {task.title} */}
+                <p className="font-medium">{task.title}</p>
+                <p className="text-sm text-gray-500">{task.description}</p>
+                <p className="text-xs">{task.dueDate}</p>
                 </li>
             ))}
             </ul>

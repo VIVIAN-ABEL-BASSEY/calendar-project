@@ -1,41 +1,3 @@
-// import { useState } from "react";
-
-// interface Props {
-//   onCreate: (title: string) => void;
-// }
-
-// const TaskInput = ({ onCreate }: Props) => {
-//   const [title, setTitle] = useState("");
-
-//   const handleAdd = () => {
-//     if (!title.trim()) return;
-
-//     onCreate(title);
-//     setTitle("");
-//   };
-
-//   return (
-//     <div className="flex gap-2 mb-4">
-//       <input
-//         type="text"
-//         placeholder="Add a new task..."
-//         value={title}
-//         onChange={(e) => setTitle(e.target.value)}
-//         className="flex-1 p-2 border rounded outline-none"
-//       />
-
-//       <button
-//         onClick={handleAdd}
-//         className="bg-blue-500 text-white px-4 rounded"
-//       >
-//         Add
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default TaskInput;
-
 import { useState } from "react";
 
 interface Props {
@@ -107,26 +69,35 @@ const TaskInput = ({ onCreate }: Props) => {
           />
 
           {/* Due Date */}
+          <div>
+          <label className="block text-sm font-medium mb-1">
+            Add Due Date
+          </label>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="p-2 border rounded"
+            className="p-2 border rounded w-full"
           />
+        </div>
 
           {/* Priority */}
-          <select
-            value={priority}
-            onChange={(e) =>
-              setPriority(e.target.value as "low" | "medium" | "high")
-            }
-            className="p-2 border rounded"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Set Priority
+            </label>
+            <select
+              value={priority}
+              onChange={(e) =>
+                setPriority(e.target.value as "low" | "medium" | "high")
+              }
+              className="p-2 border rounded w-full"
+            >
+              <option value="low">Low Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="high">High Priority</option>
+            </select>
+          </div>
           {/* Actions */}
           <div className="flex justify-end gap-2">
             <button
