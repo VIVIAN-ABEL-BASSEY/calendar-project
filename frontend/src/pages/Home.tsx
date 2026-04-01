@@ -53,15 +53,14 @@ const Home = () => {
     fetchTasks();
     }, []);
 
-    const createTask = async (title: string) => {
-    const res = await createTaskAPI({
-        title,
-        priority: "medium",
-        status: "pending",
-    });
+  const createTask = async (data: any) => {
+  const res = await createTaskAPI({
+    ...data,
+    status: "pending",
+  });
 
-    setTasks((prev) => [res.data, ...prev]);
-    };
+  setTasks((prev) => [res.data, ...prev]);
+};
 
   return (
     <Layout>
