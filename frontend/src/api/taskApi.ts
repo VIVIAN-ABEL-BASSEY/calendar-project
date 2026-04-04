@@ -11,3 +11,4 @@ export const deleteTask = (id: string) =>
 
 export const updateTask = (id: string, data: any) =>
   API.put(`/tasks/${id}`, data);
+

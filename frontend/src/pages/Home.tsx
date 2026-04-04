@@ -39,7 +39,7 @@
 
 import Layout from "../components/layout/Layout";
 import { useEffect, useState } from "react";
-import { getTasks, createTask as createTaskAPI } from "../api/taskApi";
+import { getTasks,deleteTask, createTask as createTaskAPI } from "../api/taskApi";
 import TaskInput from "../components/task/TaskInput";
 
 const Home = () => {
@@ -52,15 +52,6 @@ const Home = () => {
     useEffect(() => {
     fetchTasks();
     }, []);
-
-//   const createTask = async (data: any) => {
-//   const res = await createTaskAPI({
-//     ...data,
-//     status: "pending",
-//   });
-
-//   setTasks((prev) => [res.data, ...prev]);
-// };
 const createTask = async (data: any) => {
   const res = await createTaskAPI({
     ...data,
@@ -78,6 +69,11 @@ const createTask = async (data: any) => {
     },
     ...prev,
   ]);
+};
+const handleDelete = async (id: string) => {
+  await deleteTask(id);
+
+  setTasks((prev) => prev.filter((task) => task._id !== id));
 };
 
   return (
@@ -105,6 +101,8 @@ const createTask = async (data: any) => {
                 <p className="font-medium">{task.title}</p>
                 <p className="text-sm text-gray-500">{task.description}</p>
                 <p className="text-xs">{task.dueDate}</p>
+                <button onClick={() => handleDelete(task._id)}className="text-red-500 text-sm mt-2">Delete
+                  </button>
                 </li>
             ))}
             </ul>
