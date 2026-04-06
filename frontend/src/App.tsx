@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import "react-calendar/dist/Calendar.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";

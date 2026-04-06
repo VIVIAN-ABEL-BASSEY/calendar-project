@@ -41,6 +41,7 @@ import Layout from "../components/layout/Layout";
 import { useEffect, useState } from "react";
 import { getTasks,deleteTask, updateTask, createTask as createTaskAPI } from "../api/taskApi";
 import TaskInput from "../components/task/TaskInput";
+import TaskCalendar from "../components/calendar/TaskCalendar";
 
 const Home = () => {
     const [tasks, setTasks] = useState<any[]>([]);
@@ -120,6 +121,7 @@ const Home = () => {
           + Add Task
         </button>
       </div>
+      <TaskCalendar tasks={tasks} />
 
       {/* Content */}
       <div className="p-6">
