@@ -39,7 +39,7 @@
 
 import Layout from "../components/layout/Layout";
 import { useEffect, useState } from "react";
-import { getTasks,deleteTask, createTask as createTaskAPI } from "../api/taskApi";
+import { getTasks,deleteTask, updateTask, createTask as createTaskAPI } from "../api/taskApi";
 import TaskInput from "../components/task/TaskInput";
 
 const Home = () => {
@@ -76,6 +76,26 @@ const handleDelete = async (id: string) => {
   setTasks((prev) => prev.filter((task) => task._id !== id));
 };
 
+const toggleStatus = async (task: any) => {
+  const updatedStatus =
+    task.status === "pending" ? "completed" : "pending";
+    console.log("Sending status:", updatedStatus);
+
+  // 🔥 update UI instantly
+  setTasks((prev) =>
+    prev.map((t) =>
+      t._id === task._id ? { ...t, status: updatedStatus } : t
+    )
+  );
+
+  try {
+    const res = await updateTask(task._id, { status: updatedStatus });
+  console.log("Response:", res.data);
+  } catch (err: any) {
+    console.error("ERROR:", err.response?.data);
+  }
+};
+
   return (
     <Layout>
       {/* Header */}
@@ -96,14 +116,21 @@ const handleDelete = async (id: string) => {
         ) : (
             <ul>
             {tasks.map((task) => (
-                <li key={task._id} className="p-2 bg-white mb-2 rounded shadow">
+              <li key={task._id} className="p-2 bg-white mb-2 rounded shadow">
                 {/* {task.title} */}
-                <p className="font-medium">{task.title}</p>
+                <p className={`font-semibold text-lg ${
+                  task.status === "completed"? "line-through text-gray-400": ""}`}>
+                  {task.title}
+                </p>
                 <p className="text-sm text-gray-500">{task.description}</p>
-                <p className="text-xs">{task.dueDate}</p>
+                <p className="text-sm text-gray-500">{task.status}</p>
+                <p className="text-xs">Due on {task.dueDate}</p>
                 <button onClick={() => handleDelete(task._id)}className="text-red-500 text-sm mt-2">Delete
-                  </button>
-                </li>
+                </button>
+                <button onClick={() => toggleStatus(task)}className="text-green-500 text-sm mt-2 mr-3">
+                  {task.status === "pending" ? "Mark as Done" : "Undo"}
+                </button>
+              </li>
             ))}
             </ul>
         )}
