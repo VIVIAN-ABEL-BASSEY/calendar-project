@@ -44,7 +44,8 @@ import TaskInput from "../components/task/TaskInput";
 
 const Home = () => {
     const [tasks, setTasks] = useState<any[]>([]);
-    
+    const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
+
     const fetchTasks = async () => {
     const res = await getTasks();
     setTasks(res.data.tasks);
@@ -52,55 +53,68 @@ const Home = () => {
     useEffect(() => {
     fetchTasks();
     }, []);
-const createTask = async (data: any) => {
-  const res = await createTaskAPI({
-    ...data,
-    status: "pending",
-  });
 
-  const newTask = res.data;
+  const createTask = async (data: any) => {
+    const res = await createTaskAPI({
+      ...data,
+      status: "pending",
+    });
 
-  console.log("NEW TASK RESPONSE:", newTask); // debug
+    const newTask = res.data;
 
-  setTasks((prev) => [
-    {
-      ...newTask,
-      title: newTask.title || data.title, // fallback
-    },
-    ...prev,
-  ]);
-};
-const handleDelete = async (id: string) => {
-  await deleteTask(id);
+    console.log("NEW TASK RESPONSE:", newTask); // debug
 
-  setTasks((prev) => prev.filter((task) => task._id !== id));
-};
+    setTasks((prev) => [
+      {
+        ...newTask,
+        title: newTask.title || data.title, // fallback
+      },
+      ...prev,
+    ]);
+  };
 
-const toggleStatus = async (task: any) => {
-  const updatedStatus =
-    task.status === "pending" ? "completed" : "pending";
-    console.log("Sending status:", updatedStatus);
+  const handleDelete = async (id: string) => {
+    await deleteTask(id);
 
-  // 🔥 update UI instantly
-  setTasks((prev) =>
-    prev.map((t) =>
-      t._id === task._id ? { ...t, status: updatedStatus } : t
-    )
-  );
+    setTasks((prev) => prev.filter((task) => task._id !== id));
+  };
 
-  try {
-    const res = await updateTask(task._id, { status: updatedStatus });
-  console.log("Response:", res.data);
-  } catch (err: any) {
-    console.error("ERROR:", err.response?.data);
-  }
-};
+  const toggleStatus = async (task: any) => {
+    const updatedStatus =
+      task.status === "pending" ? "completed" : "pending";
+      console.log("Sending status:", updatedStatus);
+
+    // 🔥 update UI instantly
+    setTasks((prev) =>
+      prev.map((t) =>
+        t._id === task._id ? { ...t, status: updatedStatus } : t
+      )
+    );
+
+    try {
+      const res = await updateTask(task._id, { status: updatedStatus });
+    console.log("Response:", res.data);
+    } catch (err: any) {
+      console.error("ERROR:", err.response?.data);
+    }
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+  if (filter === "all") return true;
+  return task.status === filter;
+});
 
   return (
     <Layout>
       {/* Header */}
       <div className="bg-white p-4 shadow flex justify-between items-center">
         <h1 className="text-xl font-semibold">Today</h1>
+
+        <div className="flex gap-2 mb-4">
+          <button onClick={() => setFilter("all")}>All</button>
+          <button onClick={() => setFilter("pending")}>Pending</button>
+          <button onClick={() => setFilter("completed")}>Completed</button>
+        </div>
 
         <button className="bg-blue-500 text-white px-4 py-2 rounded">
           + Add Task
@@ -115,7 +129,7 @@ const toggleStatus = async (task: any) => {
             <p>No tasks yet</p>
         ) : (
             <ul>
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <li key={task._id} className="p-2 bg-white mb-2 rounded shadow">
                 {/* {task.title} */}
                 <p className={`font-semibold text-lg ${
