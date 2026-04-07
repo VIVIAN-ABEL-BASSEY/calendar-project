@@ -121,7 +121,7 @@ const Home = () => {
           + Add Task
         </button>
       </div>
-      <TaskCalendar tasks={tasks} />
+      <TaskCalendar tasks={tasks} onDelete={handleDelete} onToggle={toggleStatus}/>
 
       {/* Content */}
       <div className="p-6">
