@@ -108,15 +108,18 @@ const Home = () => {
   const handleEdit = (task: any) => {
     setEditingTask(task);
   };
+  
   const handleUpdate = async () => {
   try {
-    const res = await updateTask(editingTask._id, editingTask);
-
+    // ✅ Update UI instantly
     setTasks((prev) =>
       prev.map((t) =>
-        t._id === editingTask._id ? res.data : t
+        t._id === editingTask._id ? editingTask : t
       )
     );
+
+    // ✅ Then sync with backend
+    await updateTask(editingTask._id, editingTask);
 
     setEditingTask(null); // close form
   } catch (err) {
@@ -146,64 +149,64 @@ const Home = () => {
       <div className="p-6">
         <TaskInput onCreate={createTask} />
         {editingTask && (
-  <div className="p-4 bg-gray-100 rounded mb-4">
-    <h3 className="font-semibold mb-2">Edit Task</h3>
+          <div className="p-4 bg-gray-100 rounded mb-4">
+            <h3 className="font-semibold mb-2">Edit Task</h3>
 
-    <input
-      type="text"
-      value={editingTask.title}
-      onChange={(e) =>
-        setEditingTask({ ...editingTask, title: e.target.value })
-      }
-      className="p-2 border w-full mb-2"
-    />
+            <input
+              type="text"
+              value={editingTask.title}
+              onChange={(e) =>
+                setEditingTask({ ...editingTask, title: e.target.value })
+              }
+              className="p-2 border w-full mb-2"
+            />
 
-    <textarea
-      value={editingTask.description}
-      onChange={(e) =>
-        setEditingTask({
-          ...editingTask,
-          description: e.target.value,
-        })
-      }
-      className="p-2 border w-full mb-2"
-    />
+            <textarea
+              value={editingTask.description}
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  description: e.target.value,
+                })
+              }
+              className="p-2 border w-full mb-2"
+            />
 
-    <input
-      type="date"
-      value={editingTask.dueDate?.split("T")[0]}
-      onChange={(e) =>
-        setEditingTask({
-          ...editingTask,
-          dueDate: e.target.value,
-        })
-      }
-      className="p-2 border w-full mb-2"
-    />
+            <input
+              type="date"
+              value={editingTask.dueDate?.split("T")[0]}
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  dueDate: e.target.value,
+                })
+              }
+              className="p-2 border w-full mb-2"
+            />
 
-    <select
-      value={editingTask.priority}
-      onChange={(e) =>
-        setEditingTask({
-          ...editingTask,
-          priority: e.target.value,
-        })
-      }
-      className="p-2 border w-full mb-2"
-    >
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
+            <select
+              value={editingTask.priority}
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  priority: e.target.value,
+                })
+              }
+              className="p-2 border w-full mb-2"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
 
-    <button
-      onClick={handleUpdate}
-      className="bg-blue-500 text-white px-4 py-1 rounded"
-    >
-      Save
-    </button>
-  </div>
-)}
+            <button
+              onClick={handleUpdate}
+              className="bg-blue-500 text-white px-4 py-1 rounded"
+            >
+              Save
+            </button>
+          </div>
+        )}
 
         {tasks.length === 0 ? (
             <p>No tasks yet</p>
