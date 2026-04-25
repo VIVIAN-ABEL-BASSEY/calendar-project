@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-screen">
@@ -6,8 +9,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <h2 className="text-2xl font-bold mb-8">Calendar</h2>
 
         <nav className="space-y-4">
-          <p className="cursor-pointer hover:text-gray-300">Dashboard</p>
-          <p className="cursor-pointer hover:text-gray-300">Tasks</p>
+          <Link to="/" className="cursor-pointer hover:text-gray-300 block py-2">
+            Dashboard
+          </Link>
+          <Link to="/tasks" className="block py-2 cursor-pointer hover:text-gray-300">
+            Tasks
+          </Link>
           <p className="cursor-pointer hover:text-gray-300">Settings</p>
         </nav>
       </aside>
