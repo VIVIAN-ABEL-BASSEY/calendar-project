@@ -114,9 +114,9 @@
   cursor: pointer;
 }
 
-.task-chip.todo {
-  background: var(--color-chip-todo);
-  color: var(--color-chip-todo-text);
+.task-chip.pending {
+  background: #e8f5e9;
+  color: #1e7e34;
 }
 
 .task-chip.in-progress {
@@ -127,11 +127,6 @@
 .task-chip.completed {
   background: var(--color-chip-done);
   color: var(--color-chip-done-text);
-}
-
-.task-chip.scheduled {
-  background: #fef7e0;
-  color: #b06000;
 }
 
 .more-tasks {
