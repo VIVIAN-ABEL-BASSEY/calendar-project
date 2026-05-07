@@ -1,4 +1,3 @@
-// src/router/AppRouter.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute'
 import LoginPage from '../pages/LoginPage'
@@ -19,7 +18,12 @@ export default function AppRouter() {
             path="/calendar"
             element={
               <AppShell>
-                {(currentDate) => <CalendarPage currentDate={currentDate} />}
+                {(currentDate, registerCreateTask) => (
+                  <CalendarPage
+                    currentDate={currentDate}
+                    registerCreateTask={registerCreateTask}
+                  />
+                )}
               </AppShell>
             }
           />
