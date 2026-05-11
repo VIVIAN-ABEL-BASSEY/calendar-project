@@ -6,6 +6,7 @@ import CalendarGrid from '../components/calendar/CalendarGrid'
 import TaskModal from '../components/tasks/TaskModal'
 import type { Task } from '../types/task.types'
 import '../styles/calendar.css'
+import Spinner from '../components/ui/Spinner'
 
 interface Props {
   currentDate: Date
@@ -55,13 +56,22 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
     setClickedDate(null)
   }
 
-  if (isLoading && tasks.length === 0) {
-    return (
-      <div style={{ padding: 32, color: 'var(--color-text-muted)' }}>
-        Loading tasks...
-      </div>
-    )
-  }
+if (isLoading && tasks.length === 0) {
+  return (
+    <div style={{
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12,
+      color: 'var(--color-text-muted)',
+      fontSize: 14,
+    }}>
+      <Spinner />
+      Loading tasks...
+    </div>
+  )
+}
 
   if (error) {
     return (

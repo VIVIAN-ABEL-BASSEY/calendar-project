@@ -16,7 +16,7 @@ export default function CalendarCell({
   tasks,
   selectedDate,
   onSelectDate,
-  onSelectTask
+  onSelectTask,
 }: Props) {
   const isSelected = selectedDate
     ? isSameDay(selectedDate, day.date)
@@ -25,13 +25,16 @@ export default function CalendarCell({
   const classes = [
     'calendar-cell',
     !day.isCurrentMonth ? 'other-month' : '',
-    day.isToday        ? 'today'       : '',
-    isSelected         ? 'selected'    : '',
+    day.isToday         ? 'today'       : '',
+    isSelected          ? 'selected'    : '',
   ].filter(Boolean).join(' ')
 
   return (
     <div className={classes} onClick={() => onSelectDate(day.date)}>
-      <span className="cell-date-number">{day.dayNumber}</span>
+      <div className="cell-header">
+        <span className="cell-date-number">{day.dayNumber}</span>
+        <span className="cell-add-hint">+</span>
+      </div>
       <div className="cell-tasks">
         {tasks.slice(0, 3).map(t => (
           <TaskChip key={t._id} task={t} onClick={onSelectTask} />
