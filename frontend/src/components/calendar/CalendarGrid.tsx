@@ -1,4 +1,3 @@
-// src/components/calendar/CalendarGrid.tsx
 import { useMemo, useState } from 'react'
 import { buildCalendarGrid, WEEK_HEADERS } from '../../utils/dateHelpers'
 import { isSameDay } from 'date-fns'

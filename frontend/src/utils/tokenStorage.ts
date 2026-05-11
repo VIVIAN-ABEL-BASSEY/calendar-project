@@ -1,26 +1,30 @@
-// src/utils/tokenStorage.ts
+export const getAccessToken = (): string | null =>
+  localStorage.getItem('accessToken')
 
-// accessToken lives in sessionStorage — it's cleared when the tab closes
-// which is safer since it's short-lived (15 mins in your backend)
-export const getAccessToken = (): string | null => {
-  return sessionStorage.getItem('accessToken')
-}
+export const getRefreshToken = (): string | null =>
+  localStorage.getItem('refreshToken')
 
-export const setAccessToken = (token: string): void => {
-  sessionStorage.setItem('accessToken', token)
-}
+export const setAccessToken = (token: string): void =>
+  localStorage.setItem('accessToken', token)
 
-// refreshToken lives in localStorage — it needs to survive tab closes
-// since it's long-lived (7 days in your backend)
-export const getRefreshToken = (): string | null => {
-  return localStorage.getItem('refreshToken')
-}
-
-export const setRefreshToken = (token: string): void => {
+export const setRefreshToken = (token: string): void =>
   localStorage.setItem('refreshToken', token)
+
+export const setStoredUser = (user: object): void =>
+  localStorage.setItem('user', JSON.stringify(user))
+
+export const getStoredUser = (): object | null => {
+  const raw = localStorage.getItem('user')
+  if (!raw) return null
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
 }
 
 export const clearTokens = (): void => {
-  sessionStorage.removeItem('accessToken')
+  localStorage.removeItem('accessToken')
   localStorage.removeItem('refreshToken')
+  localStorage.removeItem('user')
 }
