@@ -1,4 +1,5 @@
-// group colors — we'll pull these from the store later when groups are real
+import MiniCalendar from './MiniCalendar'
+
 const DEFAULT_GROUPS = [
   { id: '1', name: 'My Tasks',     color: '#4285f4' },
   { id: '2', name: 'Dev Bucket',   color: '#0f9d58' },
@@ -7,16 +8,23 @@ const DEFAULT_GROUPS = [
 ]
 
 interface SidebarProps {
+  currentDate: Date
   onCreateTask: () => void
+  onSelectDate: (date: Date) => void
 }
 
-export default function Sidebar({ onCreateTask }: SidebarProps) {
+export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: SidebarProps) {
   return (
     <div className="sidebar">
       <button className="sidebar-create-btn" onClick={onCreateTask}>
         <span style={{ fontSize: 22, lineHeight: 1, color: 'var(--color-primary)' }}>+</span>
         Create task
       </button>
+
+      <MiniCalendar
+        currentDate={currentDate}
+        onSelectDate={onSelectDate}
+      />
 
       <div>
         <div className="sidebar-section-title">My calendars</div>

@@ -4,8 +4,12 @@ import TopBar from './TopBar'
 import Sidebar from './Sidebar'
 
 interface AppShellProps {
-  children: (currentDate: Date, registerCreateTask: (fn: () => void) => void) => React.ReactNode
+  children: (
+    currentDate: Date,
+    registerCreateTask: (fn: () => void) => void
+  ) => React.ReactNode
 }
+
 export default function AppShell({ children }: AppShellProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [createTaskFn, setCreateTaskFn] = useState<(() => void) | null>(null)
@@ -13,6 +17,12 @@ export default function AppShell({ children }: AppShellProps) {
   const handlePrev  = () => setCurrentDate(d => subMonths(d, 1))
   const handleNext  = () => setCurrentDate(d => addMonths(d, 1))
   const handleToday = () => setCurrentDate(new Date())
+
+  // when user clicks a day in the mini calendar
+  // jump the main calendar to that month
+  const handleMiniCalendarSelect = (date: Date) => {
+    setCurrentDate(date)
+  }
 
   const registerCreateTask = useCallback((fn: () => void) => {
     setCreateTaskFn(() => fn)
@@ -29,7 +39,11 @@ export default function AppShell({ children }: AppShellProps) {
         onToday={handleToday}
       />
       <div className="shell-body">
-        <Sidebar onCreateTask={() => createTaskFn?.()} />
+        <Sidebar
+          currentDate={currentDate}
+          onCreateTask={() => createTaskFn?.()}
+          onSelectDate={handleMiniCalendarSelect}
+        />
         <main className="main-content">
           {children(currentDate, registerCreateTask)}
         </main>
