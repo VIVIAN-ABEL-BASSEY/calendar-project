@@ -1,9 +1,8 @@
-
 export interface TaskGroup {
   _id: string
   name: string
   title: string
-  desc?: string
+  description?: string
   userId: string
   createdAt: string
   updatedAt: string
@@ -12,5 +11,5 @@ export interface TaskGroup {
 export interface CreateGroupPayload {
   name: string
   title: string
-  desc?: string
+  description?: string
 }

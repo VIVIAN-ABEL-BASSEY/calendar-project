@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { loadTasks } from '../features/tasks/tasksSlice'
+import { loadGroups } from '../features/groups/groupsSlice'
 import { setSelectedDate } from '../features/calendar/calendarSlice'
 import CalendarGrid from '../components/calendar/CalendarGrid'
 import TaskModal from '../components/tasks/TaskModal'
 import type { Task } from '../types/task.types'
 import '../styles/calendar.css'
 import Spinner from '../components/ui/Spinner'
+
 
 interface Props {
   currentDate: Date
@@ -23,6 +25,7 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
 
   useEffect(() => {
     dispatch(loadTasks())
+    dispatch(loadGroups())
   }, [dispatch])
 
   // register the open-blank-modal function with AppShell

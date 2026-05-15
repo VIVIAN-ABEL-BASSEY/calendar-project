@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useAppDispatch } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { addTask, editTask, removeTask } from '../../features/tasks/tasksSlice'
 import type { Task, CreateTaskPayload, TaskStatus, TaskPriority } from '../../types/task.types'
 import { format } from 'date-fns'
 import '../../styles/modal.css'
+// src/components/tasks/TaskModal.tsx
 
 interface Props {
   // if task is provided we're editing, otherwise creating
@@ -19,6 +20,7 @@ interface FormState {
   status: TaskStatus
   priority: TaskPriority
   dueDate: string
+  groupId: string
 }
 
 function getInitialForm(task?: Task | null, initialDate?: Date | null): FormState {
@@ -29,6 +31,7 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
       status:      task.status,
       priority:    task.priority,
       dueDate:     task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : '',
+      groupId:     task?.groupId ?? '',
     }
   }
   return {
@@ -37,12 +40,14 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
     status:      'pending',
     priority:    'medium',
     dueDate:     initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
+    groupId:     '',
   }
 }
 
 export default function TaskModal({ task, initialDate, onClose }: Props) {
   const dispatch = useAppDispatch()
   const isEditing = Boolean(task)
+  const groups = useAppSelector(s => s.groups.items)
 
   const [form, setForm] = useState<FormState>(() =>
     getInitialForm(task, initialDate)
@@ -66,6 +71,7 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
     e.preventDefault()
     if (!form.title.trim()) {
       setError('Title is required')
+      groupId: form.groupId || null
       return
     }
 
@@ -209,6 +215,20 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
             />
           </div>
 
+          <div className="modal-field">
+          <label htmlFor="groupId">Calendar</label>
+          <select
+            id="groupId"
+            name="groupId"
+            value={form.groupId}
+            onChange={handleChange}
+          >
+            <option value="">No calendar</option>
+            {groups.map(g => (
+              <option key={g._id} value={g._id}>{g.name}</option>
+            ))}
+          </select>
+        </div>
           <div className="modal-footer">
             {isEditing ? (
               <button

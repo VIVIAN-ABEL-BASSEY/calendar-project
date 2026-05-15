@@ -373,3 +373,34 @@
 .mini-calendar-day.has-tasks {
   position: relative;
 }
+
+/* add to src/styles/sidebar.css */
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.sidebar-section-add {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 16px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.sidebar-section-add:hover {
+  background: var(--color-sidebar-bg);
+}
+
+.sidebar-empty {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  padding: 8px;
+}
