@@ -48,7 +48,6 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
   const dispatch = useAppDispatch()
   const isEditing = Boolean(task)
   const groups = useAppSelector(s => s.groups.items)
-
   const [form, setForm] = useState<FormState>(() =>
     getInitialForm(task, initialDate)
   )
@@ -60,6 +59,17 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
     setForm(getInitialForm(task, initialDate))
     setError(null)
   }, [task, initialDate])
+
+  useEffect(() => {
+  // when groups finish loading, re-sync the groupId in the form
+  // this handles the case where the modal opened before groups were fetched
+  if (groups.length > 0 && task?.groupId) {
+    setForm(prev => ({
+      ...prev,
+      groupId: task.groupId ?? '',
+    }))
+  }
+}, [groups, task])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -86,6 +96,7 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
       dueDate:     form.dueDate
         ? new Date(form.dueDate).toISOString()
         : null,
+      groupId:     form.groupId || null,
     }
 
     let result
@@ -217,7 +228,7 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
 
           <div className="modal-field">
           <label htmlFor="groupId">Calendar</label>
-          <select
+            <select
             id="groupId"
             name="groupId"
             value={form.groupId}
@@ -225,7 +236,9 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
           >
             <option value="">No calendar</option>
             {groups.map(g => (
-              <option key={g._id} value={g._id}>{g.name}</option>
+              <option key={g._id} value={g._id}>
+                {g.name}
+              </option>
             ))}
           </select>
         </div>

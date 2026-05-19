@@ -1,4 +1,3 @@
-// src/api/tasks.api.ts
 import client from './axiosClient'
 import type { Task, CreateTaskPayload, UpdateTaskPayload } from '../types/task.types'
 
