@@ -175,3 +175,58 @@
 .calendar-cell:hover .cell-add-hint {
   opacity: 1;
 }
+
+.day-popover-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.day-popover {
+  position: fixed;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  padding: 12px;
+  min-width: 200px;
+  max-width: 260px;
+  z-index: 51;
+}
+
+.day-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.day-popover-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.day-popover-close {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.day-popover-close:hover {
+  background: var(--color-sidebar-bg);
+}
+
+.day-popover-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
