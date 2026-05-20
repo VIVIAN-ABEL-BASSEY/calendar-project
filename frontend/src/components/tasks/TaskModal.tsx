@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { addTask, editTask, removeTask } from '../../features/tasks/tasksSlice'
 import type { Task, CreateTaskPayload, TaskStatus, TaskPriority } from '../../types/task.types'
+import { extractGroupId } from '../../utils/groupHelpers'
 import { format } from 'date-fns'
 import '../../styles/modal.css'
-// src/components/tasks/TaskModal.tsx
 
 interface Props {
   // if task is provided we're editing, otherwise creating
@@ -31,7 +31,7 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
       status:      task.status,
       priority:    task.priority,
       dueDate:     task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : '',
-      groupId:     task?.groupId ?? '',
+      groupId:     extractGroupId(task.groupId),
     }
   }
   return {
@@ -61,15 +61,13 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
   }, [task, initialDate])
 
   useEffect(() => {
-  // when groups finish loading, re-sync the groupId in the form
-  // this handles the case where the modal opened before groups were fetched
   if (groups.length > 0 && task?.groupId) {
-    setForm(prev => ({
-      ...prev,
-      groupId: task.groupId ?? '',
-    }))
-  }
-}, [groups, task])
+      setForm(prev => ({
+        ...prev,
+        groupId: extractGroupId(task.groupId),
+      }))
+    }
+  }, [groups, task])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -225,7 +223,7 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
               onChange={handleChange}
             />
           </div>
-
+          
           <div className="modal-field">
           <label htmlFor="groupId">Calendar</label>
             <select
