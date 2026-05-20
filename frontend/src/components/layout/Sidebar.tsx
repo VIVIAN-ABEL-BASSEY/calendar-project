@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAppSelector } from '../../app/hooks'
 import { getGroupColor } from '../../utils/groupColors'
+import { extractGroupId } from '../../utils/groupHelpers'
 import MiniCalendar from './MiniCalendar'
 import GroupModal from '../tasks/GroupModal'
 
@@ -12,7 +13,12 @@ interface SidebarProps {
 
 export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: SidebarProps) {
   const groups = useAppSelector(s => s.groups.items)
+  const tasks  = useAppSelector(s => s.tasks.items)
   const [groupModalOpen, setGroupModalOpen] = useState(false)
+
+  // count tasks per group
+  const taskCountByGroup = (groupId: string) =>
+    tasks.filter(t => extractGroupId(t.groupId) === groupId).length
 
   return (
     <div className="sidebar">
@@ -49,15 +55,21 @@ export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: Sid
             </button>
           </div>
         ) : (
-          groups.map(g => (
-            <button key={g._id} className="sidebar-group-item">
-              <span
-                className="sidebar-group-dot"
-                style={{ background: getGroupColor(g._id) }}
-              />
-              <span style={{ flex: 1, textAlign: 'left' }}>{g.name}</span>
-            </button>
-          ))
+          groups.map(g => {
+            const count = taskCountByGroup(g._id)
+            return (
+              <button key={g._id} className="sidebar-group-item">
+                <span
+                  className="sidebar-group-dot"
+                  style={{ background: getGroupColor(g._id) }}
+                />
+                <span style={{ flex: 1, textAlign: 'left' }}>{g.name}</span>
+                {count > 0 && (
+                  <span className="sidebar-group-count">{count}</span>
+                )}
+              </button>
+            )
+          })
         )}
       </div>
 
