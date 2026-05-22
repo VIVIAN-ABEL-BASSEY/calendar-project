@@ -3,15 +3,15 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { addTask, editTask, removeTask } from '../../features/tasks/tasksSlice'
 import type { Task, CreateTaskPayload, TaskStatus, TaskPriority } from '../../types/task.types'
 import { extractGroupId } from '../../utils/groupHelpers'
+import { sendReminder } from '../../api/notifications.api'
 import { format } from 'date-fns'
 import '../../styles/modal.css'
 
 interface Props {
-  // if task is provided we're editing, otherwise creating
   task?: Task | null
-  // if initialDate is provided we pre-fill the due date (clicked a cell)
   initialDate?: Date | null
   onClose: () => void
+  showToast: (message: string, type: 'success' | 'error' | 'info') => void
 }
 
 interface FormState {
@@ -44,7 +44,7 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
   }
 }
 
-export default function TaskModal({ task, initialDate, onClose }: Props) {
+export default function TaskModal({ task, initialDate, onClose, showToast }: Props) {
   const dispatch = useAppDispatch()
   const isEditing = Boolean(task)
   const groups = useAppSelector(s => s.groups.items)
@@ -53,6 +53,7 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
   )
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reminderLoading, setReminderLoading] = useState(false)
 
   // if the task prop changes (e.g. opening a different task) reset the form
   useEffect(() => {
@@ -136,6 +137,23 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
     setIsLoading(false)
     onClose()
   }
+
+  const handleSendReminder = async () => {
+  if (!task) return
+  if (!task.dueDate) {
+    showToast('This task has no due date', 'error')
+    return
+  }
+  setReminderLoading(true)
+  try {
+    await sendReminder(task._id)
+    showToast('Reminder email sent successfully', 'success')
+  } catch {
+    showToast('Failed to send reminder', 'error')
+  } finally {
+    setReminderLoading(false)
+  }
+}
 
   // close when clicking the overlay background
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -248,8 +266,9 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
             ))}
           </select>
         </div>
-          <div className="modal-footer">
-            {isEditing ? (
+        <div className="modal-footer">
+          <div style={{ display: 'flex', gap: 8 }}>
+            {isEditing && (
               <button
                 type="button"
                 className="btn btn-danger"
@@ -258,31 +277,42 @@ export default function TaskModal({ task, initialDate, onClose }: Props) {
               >
                 Delete
               </button>
-            ) : (
-              <span />
             )}
-
-            <div className="modal-footer-actions">
+            {isEditing && task?.dueDate && (
               <button
                 type="button"
                 className="btn btn-ghost"
-                onClick={onClose}
-                disabled={isLoading}
+                onClick={handleSendReminder}
+                disabled={reminderLoading}
+                title="Send reminder email"
               >
-                Cancel
+                {reminderLoading ? 'Sending...' : '🔔 Remind me'}
               </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
-                {isLoading
-                  ? isEditing ? 'Saving...' : 'Creating...'
-                  : isEditing ? 'Save'      : 'Create task'
-                }
-              </button>
-            </div>
+            )}
+            {!isEditing && <span />}
           </div>
+
+          <div className="modal-footer-actions">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={onClose}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading
+                ? isEditing ? 'Saving...'   : 'Creating...'
+                : isEditing ? 'Save'        : 'Create task'
+              }
+            </button>
+          </div>
+        </div>
         </form>
       </div>
     </div>

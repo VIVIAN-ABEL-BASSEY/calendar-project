@@ -5,10 +5,11 @@ import { loadGroups } from '../features/groups/groupsSlice'
 import { setSelectedDate } from '../features/calendar/calendarSlice'
 import CalendarGrid from '../components/calendar/CalendarGrid'
 import TaskModal from '../components/tasks/TaskModal'
+import ToastContainer from '../components/ui/ToastContainer'
+import Spinner from '../components/ui/Spinner'
+import { useToastState } from '../hooks/useToast'
 import type { Task } from '../types/task.types'
 import '../styles/calendar.css'
-import Spinner from '../components/ui/Spinner'
-
 
 interface Props {
   currentDate: Date
@@ -23,13 +24,13 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
   const [activeTask, setActiveTask]   = useState<Task | null>(null)
   const [clickedDate, setClickedDate] = useState<Date | null>(null)
 
+  const { toasts, showToast, removeToast } = useToastState()
+
   useEffect(() => {
     dispatch(loadTasks())
     dispatch(loadGroups())
   }, [dispatch])
 
-  // register the open-blank-modal function with AppShell
-  // so the sidebar Create button can call it
   const openBlankModal = useCallback(() => {
     setActiveTask(null)
     setClickedDate(null)
@@ -59,22 +60,22 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
     setClickedDate(null)
   }
 
-if (isLoading && tasks.length === 0) {
-  return (
-    <div style={{
-      flex: 1,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 12,
-      color: 'var(--color-text-muted)',
-      fontSize: 14,
-    }}>
-      <Spinner />
-      Loading tasks...
-    </div>
-  )
-}
+  if (isLoading && tasks.length === 0) {
+    return (
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 12,
+        color: 'var(--color-text-muted)',
+        fontSize: 14,
+      }}>
+        <Spinner />
+        Loading tasks...
+      </div>
+    )
+  }
 
   if (error) {
     return (
@@ -98,8 +99,11 @@ if (isLoading && tasks.length === 0) {
           task={activeTask}
           initialDate={clickedDate}
           onClose={handleCloseModal}
+          showToast={showToast}
         />
       )}
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </>
   )
 }
