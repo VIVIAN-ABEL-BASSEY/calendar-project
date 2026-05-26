@@ -11,6 +11,7 @@ export interface ITask extends Document {
   groupId?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
+  reminderSentAt?: Date | null;
 }
 
 const taskSchema = new Schema<ITask>(
@@ -52,10 +53,14 @@ const taskSchema = new Schema<ITask>(
     type: Schema.Types.ObjectId,
      ref: "TaskGroup",
      default: null
-},
+    },
      taskGroupId: {
       type: Schema.Types.ObjectId,
       ref: "TaskGroup"
+    },
+    reminderSentAt: {
+      type: Date,
+      default: null
     }
   },
   {
