@@ -4,7 +4,7 @@ import { User } from '../modules/user/user.model'
 import { sendTaskReminderEmail } from './emailService'
 
 export const startReminderCron = () => {
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('0 * * * *', async () => {
     console.log('Running reminder cron job...')
 
     try {
