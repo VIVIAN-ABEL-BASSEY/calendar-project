@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import app from "./app";
 import { connectDB } from "./config/db";
 import { startReminderCron } from "./utils/reminderCron";
-dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 

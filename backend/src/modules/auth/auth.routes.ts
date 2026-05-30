@@ -1,5 +1,6 @@
 import { Router } from "express"
-import { register, login, refreshToken } from "./auth.controller"
+import { register, login, refreshToken, getMe  } from "./auth.controller"
+import { authenticate } from "../../middleware/auth.middleware"
 import { googleCallback } from "./google.controller"
 import passport from "../../config/passport"
 
@@ -8,6 +9,7 @@ const router = Router()
 router.post("/register", register)
 router.post("/login", login)
 router.post("/refresh", refreshToken)
+router.get("/me", authenticate, getMe)
 
 // Google OAuth routes
 // Step 1 — redirect user to Google's login page

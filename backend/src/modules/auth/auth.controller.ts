@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { registerUser, loginUser } from "./auth.service";
+import { authenticate } from '../../middleware/auth.middleware'
+import { User } from '../user/user.model'
 import jwt from "jsonwebtoken";
 
 export const register = async (req: Request, res: Response) => {
@@ -69,3 +71,18 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).userId
+    const user = await User.findById(userId).select('-passwordHash')
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    res.json({ user })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+}
