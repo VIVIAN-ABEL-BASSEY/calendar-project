@@ -3,6 +3,9 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { User } from '../modules/user/user.model'
 
 export const initializePassport = () => {
+    console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'loaded' : 'MISSING')
+    console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'loaded' : 'MISSING')
+    console.log('GOOGLE_CALLBACK_URL:', process.env.GOOGLE_CALLBACK_URL)
   passport.use(
     new GoogleStrategy(
       {
