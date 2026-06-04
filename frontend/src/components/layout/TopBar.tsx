@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { logout } from '../../features/auth/authSlice'
+import { setView } from '../../features/calendar/calendarSlice'
+import type { CalendarView } from '../../features/calendar/calendarSlice'
 import { useNavigate } from 'react-router-dom'
 
 interface TopBarProps {
@@ -14,6 +16,7 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const user = useAppSelector(s => s.auth.user)
+  const currentView = useAppSelector(s => s.calendar.view)
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -22,16 +25,17 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
     : '?'
 
-  const fullName = user
-    ? `${user.firstName} ${user.lastName}`
-    : ''
+  const fullName = user ? `${user.firstName} ${user.lastName}` : ''
 
   const handleLogout = () => {
     dispatch(logout())
     navigate('/login')
   }
 
-  // close dropdown when clicking outside
+  const handleViewChange = (view: CalendarView) => {
+    dispatch(setView(view))
+  }
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -46,14 +50,23 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
     <div className="topbar">
       <span className="topbar-logo">Task Myr</span>
 
-      <button className="topbar-today-btn" onClick={onToday}>
-        Today
-      </button>
-
+      <button className="topbar-today-btn" onClick={onToday}>Today</button>
       <button className="topbar-nav-btn" onClick={onPrev}>&#8249;</button>
       <button className="topbar-nav-btn" onClick={onNext}>&#8250;</button>
 
       <span className="topbar-month-label">{monthLabel}</span>
+
+      <div className="view-toggle">
+        {(['month', 'week', 'day'] as CalendarView[]).map(v => (
+          <button
+            key={v}
+            className={`view-toggle-btn ${currentView === v ? 'active' : ''}`}
+            onClick={() => handleViewChange(v)}
+          >
+            {v.charAt(0).toUpperCase() + v.slice(1)}
+          </button>
+        ))}
+      </div>
 
       <div className="topbar-user" ref={dropdownRef}>
         <div
@@ -74,10 +87,7 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
               </div>
             </div>
             <div className="topbar-dropdown-divider" />
-            <button
-              className="topbar-dropdown-item"
-              onClick={handleLogout}
-            >
+            <button className="topbar-dropdown-item" onClick={handleLogout}>
               Sign out
             </button>
           </div>
