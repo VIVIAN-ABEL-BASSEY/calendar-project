@@ -11,6 +11,7 @@ interface Props {
   selectedDate: Date | null
   onSelectDate: (date: Date) => void
   onSelectTask: (task: Task) => void
+  onDropTask: (taskId: string, newDate: Date) => void
 }
 
 export default function CalendarCell({
@@ -19,8 +20,10 @@ export default function CalendarCell({
   selectedDate,
   onSelectDate,
   onSelectTask,
+  onDropTask,
 }: Props) {
   const [popoverAnchor, setPopoverAnchor] = useState<DOMRect | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
 
   const isSelected = selectedDate
     ? isSameDay(selectedDate, day.date)
@@ -31,29 +34,51 @@ export default function CalendarCell({
     !day.isCurrentMonth ? 'other-month' : '',
     day.isToday         ? 'today'       : '',
     isSelected          ? 'selected'    : '',
+    isDragOver          ? 'drag-over'   : '',
   ].filter(Boolean).join(' ')
 
   const handleMoreClick = (e: React.MouseEvent) => {
-    e.stopPropagation() // don't open the create modal
+    e.stopPropagation()
     setPopoverAnchor(e.currentTarget.getBoundingClientRect())
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = () => setIsDragOver(false)
+
+  const handleDrop = (e: React.DragEvent) => {
+    setIsDragOver(false)
+    const taskId = e.dataTransfer.getData('taskId')
+    if (taskId) onDropTask(taskId, day.date)
   }
 
   return (
     <>
-      <div className={classes} onClick={() => onSelectDate(day.date)}>
+      <div
+        className={classes}
+        onClick={() => onSelectDate(day.date)}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <div className="cell-header">
           <span className="cell-date-number">{day.dayNumber}</span>
           <span className="cell-add-hint">+</span>
         </div>
         <div className="cell-tasks">
           {tasks.slice(0, 3).map(t => (
-            <TaskChip key={t._id} task={t} onClick={onSelectTask} />
+            <TaskChip
+              key={t._id}
+              task={t}
+              onClick={onSelectTask}
+              draggable
+            />
           ))}
           {tasks.length > 3 && (
-            <span
-              className="more-tasks"
-              onClick={handleMoreClick}
-            >
+            <span className="more-tasks" onClick={handleMoreClick}>
               +{tasks.length - 3} more
             </span>
           )}

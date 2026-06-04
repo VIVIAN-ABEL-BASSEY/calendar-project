@@ -403,3 +403,9 @@
   background: var(--color-selected);
   outline: 2px dashed var(--color-primary);
 }
+
+/* add to src/styles/calendar.css */
+.calendar-cell.drag-over {
+  background: var(--color-selected);
+  outline: 2px dashed var(--color-primary);
+}

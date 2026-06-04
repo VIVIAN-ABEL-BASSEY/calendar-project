@@ -9,6 +9,7 @@ interface Props {
   tasks: Task[]
   onSelectTask: (task: Task) => void
   onSelectDate: (date: Date) => void
+  onDropTask: (taskId: string, newDate: Date) => void
 }
 
 export default function CalendarGrid({
@@ -16,6 +17,7 @@ export default function CalendarGrid({
   tasks,
   onSelectTask,
   onSelectDate,
+  onDropTask,
 }: Props) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
@@ -29,7 +31,6 @@ export default function CalendarGrid({
     onSelectDate(date)
   }
 
-  // filter tasks that belong to a specific day
   const tasksForDay = (date: Date) =>
     tasks.filter(t => t.dueDate && isSameDay(new Date(t.dueDate), date))
 
@@ -51,6 +52,7 @@ export default function CalendarGrid({
                 selectedDate={selectedDate}
                 onSelectDate={handleSelectDate}
                 onSelectTask={onSelectTask}
+                onDropTask={onDropTask}
               />
             ))}
           </div>

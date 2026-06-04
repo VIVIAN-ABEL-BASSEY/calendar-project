@@ -6,6 +6,7 @@ import type { Task } from '../../types/task.types'
 interface Props {
   task: Task
   onClick: (task: Task) => void
+  draggable?: boolean
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -14,7 +15,7 @@ const PRIORITY_COLORS: Record<string, string> = {
   low:    '#1e8e3e',
 }
 
-export default function TaskChip({ task, onClick }: Props) {
+export default function TaskChip({ task, onClick, draggable = false }: Props) {
   const groups = useAppSelector(s => s.groups.items)
 
   const handleClick = (e: React.MouseEvent) => {
@@ -22,24 +23,23 @@ export default function TaskChip({ task, onClick }: Props) {
     onClick(task)
   }
 
-  // find the group this task belongs to
-  const groupId = extractGroupId(task.groupId)
-  const group = groups.find(g => g._id === groupId)
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('taskId', task._id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
 
-  // if task has a group use its color, otherwise fall back to a neutral color
-  const chipColor = group
-    ? getGroupColor(group._id)
-    : '#9aa0a6'
+  const groupId = extractGroupId(task.groupId)
+  const group   = groups.find(g => g._id === groupId)
+  const chipColor = group ? getGroupColor(group._id) : '#9aa0a6'
 
   return (
     <div
       className={`task-chip ${task.status}`}
       onClick={handleClick}
+      draggable={draggable}
+      onDragStart={draggable ? handleDragStart : undefined}
       title={`${task.title} — ${task.priority} priority${group ? ` — ${group.name}` : ''}`}
-      style={{
-        borderLeft: `3px solid ${chipColor}`,
-        paddingLeft: 5,
-      }}
+      style={{ borderLeft: `3px solid ${chipColor}`, paddingLeft: 5 }}
     >
       <span
         className="task-chip-dot"
