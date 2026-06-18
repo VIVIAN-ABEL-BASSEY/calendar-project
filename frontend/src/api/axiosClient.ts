@@ -1,3 +1,4 @@
+// src/api/axiosClient.ts
 import axios from 'axios'
 import {
   getAccessToken,
@@ -5,12 +6,12 @@ import {
   setAccessToken,
   clearTokens
 } from '../utils/tokenStorage'
+import { API_BASE_URL } from '../config/apiConfig'
 
 const client = axios.create({
-  baseURL: '/api'
+  baseURL: API_BASE_URL
 })
 
-// INTERCEPTOR 1: attach the access token to every outgoing request
 client.interceptors.request.use((config) => {
   const token = getAccessToken()
   if (token) {
@@ -19,30 +20,25 @@ client.interceptors.request.use((config) => {
   return config
 })
 
-// INTERCEPTOR 2: if we get a 401, try to refresh the token once
 client.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true // prevent infinite retry loop
+      originalRequest._retry = true
 
       try {
         const refreshToken = getRefreshToken()
-
-        const { data } = await axios.post('/api/auth/refresh', {
+        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refreshToken
         })
 
         setAccessToken(data.accessToken)
-
-        // retry the original request with the new token
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
         return client(originalRequest)
 
       } catch {
-        // refresh failed — token is expired or invalid, force logout
         clearTokens()
         window.location.href = '/login'
       }

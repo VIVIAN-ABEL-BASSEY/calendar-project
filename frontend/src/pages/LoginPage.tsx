@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { API_BASE_URL } from '../config/apiConfig'
 import { login } from '../features/auth/authSlice'
 import '../styles/auth.css'
 
@@ -80,7 +81,7 @@ export default function LoginPage() {
         </div>
 
 
-        <a  href="http://localhost:5000/api/auth/google"
+        <a  href={`${API_BASE_URL}/auth/google`}
           className="google-btn"
         >
           <svg width="18" height="18" viewBox="0 0 18 18">

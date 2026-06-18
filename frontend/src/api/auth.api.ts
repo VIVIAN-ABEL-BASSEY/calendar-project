@@ -1,5 +1,6 @@
 import axios from 'axios'
 import client from './axiosClient'
+import { API_BASE_URL } from '../config/apiConfig'
 import type { AuthResponse, LoginPayload, RegisterPayload } from '../types/api.types'
 
 export const loginUser = (payload: LoginPayload) =>
@@ -9,8 +10,6 @@ export const registerUser = (payload: RegisterPayload) =>
   client.post<AuthResponse>('/auth/register', payload).then(r => r.data)
 
 export const refreshAccessToken = (refreshToken: string) =>
-  axios.post<{ accessToken: string }>('/api/auth/refresh', { refreshToken }).then(r => r.data)
+  axios.post<{ accessToken: string }>(`${API_BASE_URL}/auth/refresh`, { refreshToken }).then(r => r.data)
 
-// logout is just a client-side operation for now — clear tokens and redirect
-// if your backend has a blacklist endpoint later, call it here
 export const logoutUser = () => Promise.resolve()
