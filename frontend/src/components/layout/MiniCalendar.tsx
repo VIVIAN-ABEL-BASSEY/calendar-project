@@ -5,7 +5,6 @@ import {
   subMonths,
   isSameDay,
   isToday,
-  isSameMonth,
 } from 'date-fns'
 import { buildCalendarGrid, WEEK_HEADERS } from '../../utils/dateHelpers'
 import { useAppSelector } from '../../app/hooks'
