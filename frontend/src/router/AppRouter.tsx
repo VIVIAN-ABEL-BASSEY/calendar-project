@@ -20,10 +20,11 @@ export default function AppRouter() {
             path="/calendar"
             element={
               <AppShell>
-                {(currentDate, registerCreateTask) => (
+                {(currentDate, registerCreateTask, registerSelectTask) => (
                   <CalendarPage
                     currentDate={currentDate}
                     registerCreateTask={registerCreateTask}
+                    registerSelectTask={registerSelectTask}
                   />
                 )}
               </AppShell>

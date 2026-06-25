@@ -4,15 +4,18 @@ import { logout } from '../../features/auth/authSlice'
 import { setView } from '../../features/calendar/calendarSlice'
 import type { CalendarView } from '../../features/calendar/calendarSlice'
 import { useNavigate } from 'react-router-dom'
+import TaskSearch from './TaskSearch'
+import type { Task } from '../../types/task.types'
 
 interface TopBarProps {
   monthLabel: string
   onPrev:  () => void
   onNext:  () => void
   onToday: () => void
+  onSelectTask: (task: Task) => void
 }
 
-export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarProps) {
+export default function TopBar({ monthLabel, onPrev, onNext, onToday, onSelectTask }: TopBarProps) {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const user = useAppSelector(s => s.auth.user)
@@ -21,10 +24,7 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const initials = user
-    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-    : '?'
-
+  const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : '?'
   const fullName = user ? `${user.firstName} ${user.lastName}` : ''
 
   const handleLogout = () => {
@@ -68,12 +68,10 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday }: TopBarPr
         ))}
       </div>
 
+      <TaskSearch onSelectTask={onSelectTask} />
+
       <div className="topbar-user" ref={dropdownRef}>
-        <div
-          className="topbar-avatar"
-          onClick={() => setDropdownOpen(d => !d)}
-          title={fullName}
-        >
+        <div className="topbar-avatar" onClick={() => setDropdownOpen(d => !d)} title={fullName}>
           {initials}
         </div>
 
