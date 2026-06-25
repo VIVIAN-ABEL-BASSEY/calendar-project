@@ -16,6 +16,7 @@ import '../styles/calendar.css'
 interface Props {
   currentDate: Date
   registerCreateTask: (fn: () => void) => void
+  registerSelectTask: (fn: (task: Task) => void) => void
 }
 
 export default function CalendarPage({ currentDate, registerCreateTask }: Props) {
@@ -43,6 +44,10 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
   useEffect(() => {
     registerCreateTask(openBlankModal)
   }, [registerCreateTask, openBlankModal])
+  
+  useEffect(() => {
+    registerSelectTask(handleSelectTask)
+  }, [registerSelectTask, tasks])
 
   const handleSelectDate = (date: Date) => {
     dispatch(setSelectedDate(date.toISOString()))
