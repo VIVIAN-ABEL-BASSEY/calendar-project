@@ -19,7 +19,7 @@ interface Props {
   registerSelectTask: (fn: (task: Task) => void) => void
 }
 
-export default function CalendarPage({ currentDate, registerCreateTask }: Props) {
+export default function CalendarPage({ currentDate, registerCreateTask, registerSelectTask }: Props) {
   const dispatch = useAppDispatch()
   const { items: tasks, isLoading, error } = useAppSelector(s => s.tasks)
   const currentView = useAppSelector(s => s.calendar.view)
@@ -44,7 +44,7 @@ export default function CalendarPage({ currentDate, registerCreateTask }: Props)
   useEffect(() => {
     registerCreateTask(openBlankModal)
   }, [registerCreateTask, openBlankModal])
-  
+
   useEffect(() => {
     registerSelectTask(handleSelectTask)
   }, [registerSelectTask, tasks])
