@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { getGroupColor } from '../../utils/groupColors'
 import { extractGroupId } from '../../utils/groupHelpers'
+import { setActiveGroupFilter} from '../../features/calendar/calendarSlice'
 import MiniCalendar from './MiniCalendar'
 import GroupModal from '../tasks/GroupModal'
 
@@ -12,13 +13,18 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: SidebarProps) {
+  const dispatch = useAppDispatch()
   const groups = useAppSelector(s => s.groups.items)
   const tasks  = useAppSelector(s => s.tasks.items)
+  const activeGroupId = useAppSelector(s => s.calendar.activeGroupId)
   const [groupModalOpen, setGroupModalOpen] = useState(false)
 
-  // count tasks per group
   const taskCountByGroup = (groupId: string) =>
     tasks.filter(t => extractGroupId(t.groupId) === groupId).length
+
+  const handleGroupClick = (groupId: string) => {
+    dispatch(setActiveGroupFilter(groupId))
+  }
 
   return (
     <div className="sidebar">
@@ -27,10 +33,7 @@ export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: Sid
         Create task
       </button>
 
-      <MiniCalendar
-        currentDate={currentDate}
-        onSelectDate={onSelectDate}
-      />
+      <MiniCalendar currentDate={currentDate} onSelectDate={onSelectDate} />
 
       <div>
         <div className="sidebar-section-header">
@@ -57,8 +60,13 @@ export default function Sidebar({ currentDate, onCreateTask, onSelectDate }: Sid
         ) : (
           groups.map(g => {
             const count = taskCountByGroup(g._id)
+            const isActive = activeGroupId === g._id
             return (
-              <button key={g._id} className="sidebar-group-item">
+              <button
+                key={g._id}
+                className={`sidebar-group-item ${isActive ? 'active' : ''}`}
+                onClick={() => handleGroupClick(g._id)}
+              >
                 <span
                   className="sidebar-group-dot"
                   style={{ background: getGroupColor(g._id) }}

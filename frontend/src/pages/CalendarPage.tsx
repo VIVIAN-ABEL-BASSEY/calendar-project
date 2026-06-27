@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { loadTasks, editTask } from '../features/tasks/tasksSlice'
 import { loadGroups } from '../features/groups/groupsSlice'
-import { setSelectedDate } from '../features/calendar/calendarSlice'
+import { setSelectedDate,clearActiveGroupFilter } from '../features/calendar/calendarSlice'
 import CalendarGrid from '../components/calendar/CalendarGrid'
 import WeekView from '../components/calendar/WeekView'
 import DayView from '../components/calendar/DayView'
@@ -11,6 +11,8 @@ import ToastContainer from '../components/ui/ToastContainer'
 import Spinner from '../components/ui/Spinner'
 import { useToastState } from '../hooks/useToast'
 import type { Task } from '../types/task.types'
+import { extractGroupId } from '../utils/groupHelpers'
+import GroupTaskList from '../components/calendar/GroupTaskList'
 import '../styles/calendar.css'
 
 interface Props {
@@ -22,12 +24,15 @@ interface Props {
 export default function CalendarPage({ currentDate, registerCreateTask, registerSelectTask }: Props) {
   const dispatch = useAppDispatch()
   const { items: tasks, isLoading, error } = useAppSelector(s => s.tasks)
+  const activeGroupId = useAppSelector(s => s.calendar.activeGroupId)
+  const visibleTasks = activeGroupId ? tasks.filter(t => extractGroupId(t.groupId) === activeGroupId) : tasks
+  const groups = useAppSelector(s => s.groups.items)
+  const activeGroup = groups.find(g => g._id === activeGroupId)
   const currentView = useAppSelector(s => s.calendar.view)
 
   const [modalOpen, setModalOpen]     = useState(false)
   const [activeTask, setActiveTask]   = useState<Task | null>(null)
   const [clickedDate, setClickedDate] = useState<Date | null>(null)
-
   const { toasts, showToast, removeToast } = useToastState()
 
   useEffect(() => {
@@ -114,47 +119,58 @@ export default function CalendarPage({ currentDate, registerCreateTask, register
   }
 
   return (
-    <>
-      {currentView === 'month' && (
-        <CalendarGrid
-          currentDate={currentDate}
-          tasks={tasks}
-          onSelectTask={handleSelectTask}
-          onSelectDate={handleSelectDate}
-          onDropTask={handleDropTask}
-        />
-      )}
+  <>
+    {activeGroupId && activeGroup ? (
+      <GroupTaskList
+        tasks={visibleTasks}
+        groupName={activeGroup.name}
+        onSelectTask={handleSelectTask}
+        onClose={() => dispatch(clearActiveGroupFilter())}
+      />
+    ) : (
+      <>
+        {currentView === 'month' && (
+          <CalendarGrid
+            currentDate={currentDate}
+            tasks={tasks}
+            onSelectTask={handleSelectTask}
+            onSelectDate={handleSelectDate}
+            onDropTask={handleDropTask}
+          />
+        )}
 
-      {currentView === 'week' && (
-        <WeekView
-          currentDate={currentDate}
-          tasks={tasks}
-          onSelectTask={handleSelectTask}
-          onSelectDate={handleSelectDate}
-          onDropTask={handleDropTask}
-        />
-      )}
+        {currentView === 'week' && (
+          <WeekView
+            currentDate={currentDate}
+            tasks={tasks}
+            onSelectTask={handleSelectTask}
+            onSelectDate={handleSelectDate}
+            onDropTask={handleDropTask}
+          />
+        )}
 
-      {currentView === 'day' && (
-        <DayView
-          currentDate={currentDate}
-          tasks={tasks}
-          onSelectTask={handleSelectTask}
-          onSelectDate={handleSelectDate}
-          onDropTask={handleDropTask}
-        />
-      )}
+        {currentView === 'day' && (
+          <DayView
+            currentDate={currentDate}
+            tasks={tasks}
+            onSelectTask={handleSelectTask}
+            onSelectDate={handleSelectDate}
+            onDropTask={handleDropTask}
+          />
+        )}
+      </>
+    )}
 
-      {modalOpen && (
-        <TaskModal
-          task={activeTask}
-          initialDate={clickedDate}
-          onClose={handleCloseModal}
-          showToast={showToast}
-        />
-      )}
+    {modalOpen && (
+      <TaskModal
+        task={activeTask}
+        initialDate={clickedDate}
+        onClose={handleCloseModal}
+        showToast={showToast}
+      />
+    )}
 
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
-    </>
-  )
+    <ToastContainer toasts={toasts} onRemove={removeToast} />
+  </>
+)
 }

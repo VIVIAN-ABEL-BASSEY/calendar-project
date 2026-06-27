@@ -409,3 +409,120 @@
   background: var(--color-selected);
   outline: 2px dashed var(--color-primary);
 }
+/* add to src/styles/calendar.css */
+.group-task-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.group-task-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.group-task-list-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.group-task-list-count {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.group-task-list-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.group-task-list-empty {
+  padding: 48px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.group-task-list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.group-task-list-row:hover {
+  background: var(--color-sidebar-bg);
+}
+
+.group-task-list-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.group-task-list-row-title {
+  flex: 1;
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.group-task-list-status {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  padding: 3px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.group-task-list-status.status-pending {
+  background: #e8f5e9;
+  color: #1e7e34;
+}
+
+.group-task-list-status.status-in-progress {
+  background: var(--color-chip-progress);
+  color: var(--color-chip-progress-text);
+}
+
+.group-task-list-status.status-completed {
+  background: var(--color-chip-done);
+  color: var(--color-chip-done-text);
+}
+
+.group-task-list-row-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 90px;
+  text-align: right;
+}
+/* add to src/styles/calendar.css */
+.group-task-list-close {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+
+.group-task-list-close:hover {
+  background: var(--color-sidebar-bg);
+  color: var(--color-text);
+}
