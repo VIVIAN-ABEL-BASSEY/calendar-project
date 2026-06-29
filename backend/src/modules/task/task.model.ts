@@ -12,6 +12,7 @@ export interface ITask extends Document {
   createdAt: Date;
   updatedAt: Date;
   reminderSentAt?: Date | null;
+  recurrence?: "none" | "daily" | "weekly" | "monthly";
 }
 
 const taskSchema = new Schema<ITask>(
@@ -54,14 +55,19 @@ const taskSchema = new Schema<ITask>(
      ref: "TaskGroup",
      default: null
     },
-     taskGroupId: {
+    taskGroupId: {
       type: Schema.Types.ObjectId,
       ref: "TaskGroup"
     },
     reminderSentAt: {
       type: Date,
       default: null
-    }
+    },
+    recurrence: {
+      type: String,
+      enum: ["none", "daily", "weekly", "monthly"],
+      default: "none"
+    },
   },
   {
     timestamps: true

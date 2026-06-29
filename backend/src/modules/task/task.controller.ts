@@ -3,33 +3,6 @@ import mongoose from "mongoose";
 import { Task } from "./task.model";
 import { title } from "node:process";
 
-// export const createTask = async (req: Request, res: Response) => {
-//   try {
-//     const { title, description, dueDate, priority, taskGroupId } = req.body;
-
-//     // userId will come from auth middleware
-//     const userId = (req as any).userId;
-
-//     const task = await Task.create({
-//       title,
-//       description,
-//       dueDate,
-//       priority,
-//       taskGroupId,
-//       userId
-//     });
-
-//     res.status(201).json({
-//       message: "Task created successfully",
-//       task
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Failed to create task"
-//     });
-//   }
-// };
 export const createTask = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
