@@ -9,6 +9,8 @@ import {
 } from 'date-fns'
 import TaskChip from './TaskChip'
 import type { Task } from '../../types/task.types'
+import { taskOccursOnDate } from '../../utils/recurrence'
+
 
 interface Props {
   currentDate: Date
@@ -32,7 +34,7 @@ export default function WeekView({
   }, [currentDate])
 
   const tasksForDay = (date: Date) =>
-    tasks.filter(t => t.dueDate && isSameDay(new Date(t.dueDate), date))
+  tasks.filter(t => taskOccursOnDate(t, date).occurs)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -74,11 +76,11 @@ export default function WeekView({
           >
             {tasksForDay(day).map(t => (
               <TaskChip
-                key={t._id}
-                task={t}
-                onClick={onSelectTask}
-                draggable
-              />
+              key={t._id}
+              task={t}
+              onClick={onSelectTask}
+              draggable={taskOccursOnDate(t, day).isAnchor}
+            />
             ))}
           </div>
         ))}

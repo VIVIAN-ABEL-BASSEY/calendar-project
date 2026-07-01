@@ -3,6 +3,7 @@ import { buildCalendarGrid, WEEK_HEADERS } from '../../utils/dateHelpers'
 import { isSameDay } from 'date-fns'
 import CalendarCell from './CalendarCell'
 import type { Task } from '../../types/task.types'
+import { taskOccursOnDate } from '../../utils/recurrence'
 
 interface Props {
   currentDate: Date
@@ -32,7 +33,7 @@ export default function CalendarGrid({
   }
 
   const tasksForDay = (date: Date) =>
-    tasks.filter(t => t.dueDate && isSameDay(new Date(t.dueDate), date))
+  tasks.filter(t => taskOccursOnDate(t, date).occurs)
 
   return (
     <div className="calendar-container">

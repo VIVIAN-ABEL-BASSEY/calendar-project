@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { addTask, editTask, removeTask } from '../../features/tasks/tasksSlice'
-import type { Task, CreateTaskPayload, TaskStatus, TaskPriority } from '../../types/task.types'
+import type { Task, CreateTaskPayload, TaskStatus, TaskPriority, TaskRecurrence } from '../../types/task.types'
 import { extractGroupId } from '../../utils/groupHelpers'
 import { sendReminder } from '../../api/notifications.api'
 import { format } from 'date-fns'
 import '../../styles/modal.css'
+
 
 interface Props {
   task?: Task | null
@@ -21,6 +22,7 @@ interface FormState {
   priority: TaskPriority
   dueDate: string
   groupId: string
+  recurrence: TaskRecurrence
 }
 
 function getInitialForm(task?: Task | null, initialDate?: Date | null): FormState {
@@ -32,6 +34,7 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
       priority:    task.priority,
       dueDate:     task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : '',
       groupId:     extractGroupId(task.groupId),
+      recurrence:  task.recurrence ?? 'none',
     }
   }
   return {
@@ -41,6 +44,7 @@ function getInitialForm(task?: Task | null, initialDate?: Date | null): FormStat
     priority:    'medium',
     dueDate:     initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
     groupId:     '',
+    recurrence:  'none', 
   }
 }
 
@@ -104,6 +108,7 @@ export default function TaskModal({ task, initialDate, onClose, showToast }: Pro
         ? new Date(form.dueDate).toISOString()
         : null,
       groupId:     form.groupId || null,
+      recurrence:  form.recurrence,
     }
 
     let result
@@ -249,7 +254,20 @@ export default function TaskModal({ task, initialDate, onClose, showToast }: Pro
               onChange={handleChange}
             />
           </div>
-          
+          <div className="modal-field">
+            <label htmlFor="recurrence">Repeat</label>
+            <select
+              id="recurrence"
+              name="recurrence"
+              value={form.recurrence}
+              onChange={handleChange}
+            >
+              <option value="none">Does not repeat</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
           <div className="modal-field">
           <label htmlFor="groupId">Calendar</label>
             <select

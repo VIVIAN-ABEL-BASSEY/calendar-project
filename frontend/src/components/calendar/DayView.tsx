@@ -3,6 +3,7 @@ import { useAppSelector } from '../../app/hooks'
 import { getGroupColor } from '../../utils/groupColors'
 import { extractGroupId } from '../../utils/groupHelpers'
 import type { Task } from '../../types/task.types'
+import { taskOccursOnDate } from '../../utils/recurrence'
 
 interface Props {
   currentDate: Date
@@ -27,9 +28,7 @@ export default function DayView({
 }: Props) {
   const groups = useAppSelector(s => s.groups.items)
 
-  const dayTasks = tasks.filter(
-    t => t.dueDate && isSameDay(new Date(t.dueDate), currentDate)
-  )
+  const dayTasks = tasks.filter(t => taskOccursOnDate(t, currentDate).occurs)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()

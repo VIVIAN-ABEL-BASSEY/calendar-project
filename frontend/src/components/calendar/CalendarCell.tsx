@@ -4,6 +4,7 @@ import TaskChip from './TaskChip'
 import DayPopover from './DayPopover'
 import type { CalendarDay } from '../../utils/dateHelpers'
 import type { Task } from '../../types/task.types'
+import { taskOccursOnDate } from '../../utils/recurrence'
 
 interface Props {
   day: CalendarDay
@@ -70,13 +71,13 @@ export default function CalendarCell({
         </div>
         <div className="cell-tasks">
           {tasks.slice(0, 3).map(t => (
-            <TaskChip
-              key={t._id}
-              task={t}
-              onClick={onSelectTask}
-              draggable
-            />
-          ))}
+          <TaskChip
+            key={t._id}
+            task={t}
+            onClick={onSelectTask}
+            draggable={taskOccursOnDate(t, day.date).isAnchor}
+          />
+        ))}
           {tasks.length > 3 && (
             <span className="more-tasks" onClick={handleMoreClick}>
               +{tasks.length - 3} more
