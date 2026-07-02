@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { buildCalendarGrid, WEEK_HEADERS } from '../../utils/dateHelpers'
-// import { isSameDay } from 'date-fns'
 import CalendarCell from './CalendarCell'
 import type { Task } from '../../types/task.types'
 import { taskOccursOnDate } from '../../utils/recurrence'
