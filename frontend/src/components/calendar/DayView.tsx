@@ -1,4 +1,4 @@
-import { format, isToday, isSameDay } from 'date-fns'
+import { format, isToday,} from 'date-fns'
 import { useAppSelector } from '../../app/hooks'
 import { getGroupColor } from '../../utils/groupColors'
 import { extractGroupId } from '../../utils/groupHelpers'

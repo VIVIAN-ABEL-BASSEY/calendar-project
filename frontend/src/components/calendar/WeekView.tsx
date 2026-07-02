@@ -5,7 +5,6 @@ import {
   eachDayOfInterval,
   format,
   isToday,
-  isSameDay,
 } from 'date-fns'
 import TaskChip from './TaskChip'
 import type { Task } from '../../types/task.types'
