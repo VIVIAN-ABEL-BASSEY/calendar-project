@@ -132,3 +132,25 @@
   background: var(--color-sidebar-bg);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+/* add to src/styles/auth.css */
+[data-theme="dark"] .auth-page {
+  background: var(--color-sidebar-bg);
+}
+
+[data-theme="dark"] .auth-card {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .form-group input {
+  background: var(--color-sidebar-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .google-btn {
+  background: var(--color-sidebar-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
