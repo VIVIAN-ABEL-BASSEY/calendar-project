@@ -3,6 +3,7 @@ import { useAppDispatch } from './app/hooks'
 import { logout } from './features/auth/authSlice'
 import { getAccessToken, getRefreshToken, setAccessToken } from './utils/tokenStorage'
 import { refreshAccessToken } from './api/auth.api'
+import { useDarkMode } from './hooks/useDarkMode'
 import AppRouter from './router/AppRouter'
 
 function isTokenExpired(token: string): boolean {
@@ -43,6 +44,6 @@ export default function App() {
 
     validateSession()
   }, [])
-
+  useDarkMode()
   return <AppRouter />
 }
