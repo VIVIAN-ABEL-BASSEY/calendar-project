@@ -5,6 +5,7 @@ import { setView } from '../../features/calendar/calendarSlice'
 import type { CalendarView } from '../../features/calendar/calendarSlice'
 import { useNavigate } from 'react-router-dom'
 import TaskSearch from './TaskSearch'
+import { useDarkMode } from '../../hooks/useDarkMode'
 import type { Task } from '../../types/task.types'
 
 interface TopBarProps {
@@ -18,6 +19,7 @@ interface TopBarProps {
 export default function TopBar({ monthLabel, onPrev, onNext, onToday, onSelectTask }: TopBarProps) {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { isDark, toggleDarkMode } = useDarkMode()
   const user = useAppSelector(s => s.auth.user)
   const currentView = useAppSelector(s => s.calendar.view)
 
@@ -67,7 +69,13 @@ export default function TopBar({ monthLabel, onPrev, onNext, onToday, onSelectTa
           </button>
         ))}
       </div>
-
+      <button
+        className="topbar-theme-btn"
+        onClick={toggleDarkMode}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {isDark ? '☀️' : '🌙'}
+      </button>
       <TaskSearch onSelectTask={onSelectTask} />
 
       <div className="topbar-user" ref={dropdownRef}>
